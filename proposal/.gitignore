@@ -1,0 +1,8 @@
+*.dvi
+*.log
+*.bbl
+*.blg
+dirt
+*.aux
+*.d
+*.*~

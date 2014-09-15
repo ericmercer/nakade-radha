@@ -1,0 +1,64 @@
+\documentclass[11pt]{article}
+
+%% Imports as the graphics functions and color options
+\usepackage{graphicx,color}
+\usepackage{setspace}
+\usepackage{subfig}
+\usepackage{listings}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{comment}
+
+% Use Times Roman font 
+\usepackage{mathptmx}
+\renewcommand{\rmdefault}{ptm}
+
+
+%% Make the margins 1 inch all around
+\setlength{\textheight}{9.25in}
+\setlength{\topmargin}{-0.75in}
+\setlength{\textwidth}{7.0in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+
+%% This enables the figure to use the same font family as the document
+%% (i.e., font family and size is the same in the figure as it is
+%% in the text).
+\gdef\SetFigFont#1#2#3#4#5{}
+
+%% \figref is used to make all figure references consistent and easy to change
+\newcommand{\figref}[1]{Figure~\ref{#1}}
+%% \tabref is used to make all table references consistent and easy to change
+\newcommand{\tabref}[1]{Table~\ref{#1}}
+\newcommand{\secref}[1]{Section~\ref{#1}}
+
+%% Use single space
+\linespread{1.0}
+
+\begin{document} 
+\input{title}
+
+\pagestyle{plain}
+%%\setcounter{page}{1}
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\input{introduction}
+
+\input{thesis-statement}
+
+\input{related-work}
+
+\input{project-description}
+
+\input{validation}
+
+\input{schedule}
+
+\bibliography{../bib/proposal}
+\bibliographystyle{plain-annote}
+
+\input{sig-page}
+\end{document} 
