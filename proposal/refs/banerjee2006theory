@@ -1,0 +1,1 @@
+This paper discusses a mathematical framework that can be used to study the tradeoff between the amount of access history kept and the kinds of data races that can be detected. It is important to the verification of parallel programs that is the main focus of this research.

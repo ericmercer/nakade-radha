@@ -1,0 +1,1 @@
+This paper introduces a tool called Eraser for dynamically detecting data races in parallel programs. Data races cause the parallel programs to behave non-deterministically. It is very important to detect data races in parallel programs to make it deterministic. Hence, this work is important to the research.

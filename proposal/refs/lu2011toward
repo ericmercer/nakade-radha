@@ -1,0 +1,1 @@
+This paper discusses a formal semantic framework for deterministic parallel programs. It is important to have a formal definition of determinism for verifying program correctness. Hence, it is important to the research proposed here.

@@ -1,0 +1,1 @@
+This paper introduces a verification runtime for Habanero Java programs.It exteds Java Path Finder (JPF), an existing model checker for java for verification of HJ programs. This work is important to the research proposed here because it discusses one of the important methods of verfication process, model checking.
