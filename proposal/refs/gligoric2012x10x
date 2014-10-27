@@ -1,1 +1,1 @@
-This paper discusses a way of model checking X10 programs with Java Path Finder (JPF), a model checker for java. This work is imporatnt to this proposal because it discusses one the verification techniques for task parallel programs.
+This paper discusses a way of model checking X10 programs with Java Path Finder (JPF), a model checker for java. 
