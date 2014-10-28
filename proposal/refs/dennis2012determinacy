@@ -1,1 +1,1 @@
-This paper presents precise definitions of the two related properties of program schemata – ‘determinacy’ and ‘repeatability’.
+This paper presents precise definitions of two closely related properties of program schemata – ‘determinacy’ and ‘repeatability’. These definitions establish relationships between data-flow and task-parallel models.

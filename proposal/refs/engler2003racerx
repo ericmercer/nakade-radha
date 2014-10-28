@@ -1,0 +1,1 @@
+This paper describes a static analysis tool called RacerX. RacerX is used for detecting deadlocks and race conditions in complex multi-threaded systems. 

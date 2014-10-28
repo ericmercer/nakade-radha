@@ -1,1 +1,1 @@
-This paper discusses a mathematical framework that can be used to study the tradeoff between the amount of access history kept and the kinds of data races that can be detected.
+This paper discusses a mathematical framework that can be used to study the tradeoff between the amount of access history kept and the kinds of data races that can be detected. It describes the necessary and sufficient conditions for two threads to have a data race. It also describes some algorithms to detect races in different conditions.

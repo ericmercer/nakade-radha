@@ -1,1 +1,1 @@
-This paper introduces a precise data race detector called "Fasttrack".
+This paper introduces a data race detector called "Fasttrack" that is fast and precise. It uses an adaptive representation for the happens-before relation to provide constant-time fast paths for common cases without loss of precision.

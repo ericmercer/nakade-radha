@@ -1,1 +1,1 @@
-This paper proposes a region-based type and effect system for expressing important patterns of deterministic parallelism in imperative, object-oriented programs. 
+This paper proposes a region-based type and effect system for expressing important patterns of deterministic parallelism in imperative, object-oriented programs. It also describes a language called Deterministic Parallel Java (DPJ) that incorporates these features. 

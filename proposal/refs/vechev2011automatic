@@ -1,1 +1,1 @@
-This paper discusses a technique for verification of determinism in parallel programs.
+This paper discusses a technique for verification of determinism in parallel programs. It identifies the fragments of the program that execute in parallel. Then, it checks if these fragments perform independent memory accesses using a sequential analysis. 
