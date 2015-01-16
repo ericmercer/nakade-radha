@@ -1,8 +1,8 @@
 \section{Project Description}
 \subsection{High Level Description}
-Habanero Java is a task parallel programming language built as an extension to X10 language. It includes a set of powerful parallel programming constructs that ca be used to create programs that are inherently safe. HJ programs can be runon  any JVM including Java 8 JVM.  The Habanero Java language puts a particular emphasis on the usability and safety of parallel programming constructs. For Example, no HJ program writen using async, finish, isolated and phaser constructs can create a logical deadlock cycle. The verification of these safety properties can be done using computation graphs of the programs that represent the visualization of the execution of the program.
+Task parallel programming languages execute different processes on multiple computing cores. Processes execute different instructions simultaneously leading to different thread schedules and memory access patterns. To test the correctness of the program, all possible thread-interleavings have to be considered. The control flow of the program also has to be considered while checking program correctness. Errors are sometimes only detected when the program executed a particular branch of code. Such type of errors are dependent on the input and the control flow of the program. A computation graph of a task parallel program helps to visualize the execution of the program for particular input. As the input of the program changes, the shape of the computation graph can change if the program follows a different path of execution. Enumerating all inputs that cause the program to take all possible paths is a way to create all possible computation graph structures. Concolic execution of a program (executing program both symbolically and concretely) is a way enumerate all possible inputs of the program that create different computation graph structures.
 \subsection{Computation Graphs}
-The execution of an HJ program can be represented in the form of a computation graph. A computation graph of a program is a directed acyclic graph(DAG) structure that captures the meaning of the program's execution as a partial order. A computation graph consists of:
+The execution of an task parallel program can be represented in the form of a computation graph. A computation graph of a program is a directed acyclic graph(DAG) structure that captures the meaning of the program's execution as a partial order. A computation graph consists of:
 \begin{enumerate}
 \item A set of nodes, where each node represents a step consisting of an arbitrary sequential computation. 
 \item A set of directed edges that represent ordering constraints. 
@@ -12,11 +12,9 @@ The execution of an HJ program can be represented in the form of a computation g
 \item Continue edges that capture sequencing of steps within a a task - all steps within the same task are connected by a chain of continue edges.
  \end{itemize} 
 \end{enumerate}
-An HJ computation graph can be built using a tool called HJ-Viz. HJ-Viz processes the event logs produced by the HJLib runtime and generates a dot representation of the computation graph. The dot file can later be processed and displayed in the user’s web browser using the HJ-Viz server. The drawback of this tool is that it does not store the computation graph in a logical data structure that can be traversed and analyzed to verify the properties of the program. Another drawback is that it does not save any references to objects in memory. Hence, we need to create a tool that can build a computation graph of an HJ program during runtime and store the information in a data-structure. We have chosen Java Path Finder (JPF) to create the improved version of the computation graph builder. 
 
-The modified computation graph builder is implemented using Java Path Finder(JPF). It uses a Verification Runtime, specifically designed to run HJ programs using JPF. The HJ program is compiled using the VR and the class files are analyzed using JPF. JPF creates thread choice generators to systematically explore the state-space of the programs. We use one choice of thread interleavings at a time to observe the execution and build a computation graph for this execution. The VM listeners in JPF are extended to track the thread creations, executions, joins etc. Memory references are also registered in the computation graphs.
-\subsection{Properties of Habanero Java Programs}
-The following properties of Habanero Java programs can be verified using computation graphs.
+\subsection{Properties of Task Parallel Programs}
+The following properties of task parallel programs can be verified using computation graphs.
 \subsubsection{Determinism}
 Determinism refers to obtaining the same result from a parallel program for a given input. There are different definitions that determine the degree of determinism in parallel programs.
 \begin{enumerate}
@@ -31,20 +29,17 @@ This type of determinism requires the parallel program to not only produce the s
 A Deadlock arises in parallel programs when two or more processes are waiting to acquire resources held by other processes without making any progress. The necessary conditions (known as the Coffman conditions) for a deadlock to arise are as follows:
 \begin{enumerate}
 \item 
-\textbf{Mutual Exclusion:} At least one resource must be held in a non-shareable mode. Only one process can access the resource at any given time. 
+{Mutual Exclusion:} At least one resource must be held in a non-shareable mode. Only one process can access the resource at any given time. 
 \item
-\textbf{Hold and Wait:} This condition refers to a process holding a non shareable resource and trying to acquire another one.
+{Hold and Wait:} This condition refers to a process holding a non shareable resource and trying to acquire another one.
 \item
-\textbf{No Preemption}
+{No Preemption}
 If no tasks are allowed to preempt other tasks from holding the locks for certain resources, it can cause a deadlock to happen.
 \item
-\textbf{Circular Wait} Circular wait implies that there are at least two tasks that are waiting on resources held by the other tasks.
+{Circular Wait} Circular wait implies that there are at least two tasks that are waiting on resources held by the other tasks.
 \end{enumerate}
 
 A computation graph keeps track of all the resources being accessed or requested by processes. If there is a circular dependency for any of the resources in the graph, then a deadlock is reported.
 
 \subsubsection{Data Race}
 Data races occur in parallel programs when two or more tasks try to access shared variables such that at least one of the accesses is a 'write'. Data races cause the output of the program to become non-deterministic. Data races can be detected in a computation graph when two parallel nodes in the graph access a memory location and atleast one of the operations tries to modify it.
-\subsubsection{Serialization}
-A parallel program is said to be serializable if the sequential program obtained by removing the parallel constructs of the program represents a legal schedule for the original program.
-
