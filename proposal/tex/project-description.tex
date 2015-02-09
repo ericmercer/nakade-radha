@@ -1,10 +1,9 @@
 \section{Project Description}
-\subsection{High Level Description}
-The research described here proposes a new technique of verification of task parallel programs with the help of computation graphs. It uses Habanero Java as an exemplar of task parallel languages. Habanero Java is a task parallel programming language built as an extension to X10 language. It includes a set of powerful parallel programming constructs that can be used to create programs that are inherently safe. HJ programs can be run on any JVM including Java 8 JVM.  The Habanero Java language puts particular emphasis on the usability and safety of parallel programming constructs. For Example, no HJ program writen using async, finish, isolated and phaser constructs can create a logical deadlock cycle.
+The research described here proposes a new technique for verification of task parallel programs with the help of computation graphs. It uses Habanero Java as an exemplar of task parallel languages. Habanero Java is a task parallel programming language built as an extension to X10 language. It includes a set of powerful parallel programming constructs that can be used to create programs that are inherently safe. HJ programs can be run on any JVM including Java 8 JVM.  The Habanero Java language puts particular emphasis on the usability and safety of parallel programming constructs. For Example, no HJ program written using async, finish, isolated and phaser constructs can create a logical deadlock cycle.
 \subsection{HJ constructs}
 Habanero Java consists of a wide range of constructs for parallel programming.
 \begin{enumerate}
-\item \textbf{Task Spawn and join} - Async and finish constructs are used to create and join tasks created by a parent process. The statement async(() -> <stmt> ) creates a new task that can logically execute in parallel with its parent task. The Finish method is used to represent join in Habanero Java. The task executing finish(() ->  <stmt> ) has to wait for all the tasks running inside stmt to finish before it can move on.
+\item \textbf{Task Spawn and Join} - Async and finish constructs are used to create and join tasks created by a parent process. The statement async(() -> <stmt> ) creates a new task that can logically execute in parallel with its parent task. The Finish method is used to represent join in Habanero Java. The task executing finish(() ->  <stmt> ) has to wait for all the tasks running inside stmt to finish before it can move on.
 \item \textbf{Loop Parallelism} - The forall and foreach constructs in HJ are used for loop parallelism. An implicit finish is included at the end of forall iterations whereas foreach iterations do not have an implicit finish. 
 \item \textbf{Coordination constructs} - There are often dependences among parallel tasks. To coordinate the execution of the parallel tasks, Habanero Java provides some constructs such as isolated, futures, data-driven futures, phasers and actors.
 \begin{enumerate}
@@ -19,7 +18,7 @@ Most of the concurrently running processes have the need to synchronize the acce
 The execution of an task parallel program can be represented in the form of a computation graph. A computation graph of a program is a directed acyclic graph(DAG) structure that captures the meaning of the program's execution as a partial order. A computation graph can be represented as G = <V, E> consisting of the following:
 \begin{enumerate}
 \item A set of nodes (V), where each node represents a step consisting of an arbitrary sequential computation. 
-\item A set of directed edges (E) that represent ordering constraints. The various types of egdes in a computation graph are:
+\item A set of directed edges (E) that represent ordering constraints. The various types of edges in a computation graph are:
 \begin{itemize}
  \item \textbf{Spawn edges} - They connect steps in parent tasks to steps in child async tasks. When an async is created, a spawn edge is inserted between the step that ends with the async in the parent task and the step that starts the async body in the new child task.
 \item \textbf{Join edges} - They connect steps in descendant tasks to steps in the tasks containing their Immediately Enclosing Finish (IEF) instances. When an async terminates, a join edge is inserted from the last step in the async to the step that follows the IEF operation in the task containing the IEF operation.
@@ -29,6 +28,8 @@ The execution of an task parallel program can be represented in the form of a co
 
 \subsection{Properties of Task Parallel Programs}
 The following properties of task parallel programs can be verified using computation graphs.
+\subsubsection{Data Race}
+Data races occur in parallel programs when two or more tasks try to access shared variables such that at least one of the accesses is a 'write'. Data races cause the output of the program to become non-deterministic. Data races can be detected in a computation graph when two parallel nodes in the graph access a memory location and atleast one of the operations tries to modify it.
 \subsubsection{Determinism}
 Determinism refers to obtaining the same result from a parallel program for a given input. There are different definitions that determine the degree of determinism in parallel programs.
 \begin{enumerate}
@@ -43,17 +44,13 @@ This type of determinism requires the parallel program to not only produce the s
 A Deadlock arises in parallel programs when two or more processes are waiting to acquire resources held by other processes without making any progress. The necessary conditions (known as the Coffman conditions) for a deadlock to arise are as follows:
 \begin{enumerate}
 \item 
-{Mutual Exclusion:} At least one resource must be held in a non-shareable mode. Only one process can access the resource at any given time. 
+{Mutual Exclusion:} At least one resource must be held in a non share-able mode. Only one process can access the resource at any given time. 
 \item
-{Hold and Wait:} This condition refers to a process holding a non shareable resource and trying to acquire another one.
+{Hold and Wait:} This condition refers to a process holding a non share-able resource and trying to acquire another one.
 \item
 {No Preemption}
 If no tasks are allowed to preempt other tasks from holding the locks for certain resources, it can cause a deadlock to happen.
 \item
 {Circular Wait} Circular wait implies that there are at least two tasks that are waiting on resources held by the other tasks.
 \end{enumerate}
-
-A computation graph keeps track of all the resources being accessed or requested by processes. If there is a circular dependency for any of the resources in the graph, then a deadlock is reported.
-
-\subsubsection{Data Race}
-Data races occur in parallel programs when two or more tasks try to access shared variables such that at least one of the accesses is a 'write'. Data races cause the output of the program to become non-deterministic. Data races can be detected in a computation graph when two parallel nodes in the graph access a memory location and atleast one of the operations tries to modify it.
+If all the computation graph structures created for all possible inputs of a program do not encounter any processes getting blocked during execution, then we can say the program is deadlock-free.
