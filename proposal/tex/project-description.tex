@@ -39,6 +39,12 @@ Fig.1 shows an example program written in Habanero Java. In this example, the ma
   \caption{Computation Graph of the example program}
     \includegraphics[scale=0.4]{../figs/Fig2.jpg}
 \end{figure}
+
+\subsection{Implementation details}
+An HJ computation graph can be built using a tool called HJ-Viz. HJ-Viz processes the event logs produced by the HJLib runtime and generates a dot representation of the computation graph. The dot file can later be processed and displayed in the user’s web browser using the HJ-Viz server. The drawback of this tool is that it does not store the computation graph in a logical data structure that can be traversed and analyzed to verify the properties of the program. Another drawback is that it does not save any memory references to objects. Hence, we need to create a tool that can build a computation graph of an HJ program during runtime and store the information in a logical data-structure that is easy to traverse and analyze.
+
+The modified computation graph builder is implemented using Java Path Finder(JPF). It uses the Verification Runtime, specifically designed to run HJ programs using JPF. The HJ program is compiled using the VR and the class files are analyzed using JPF. JPF creates thread choice generators to systematically explore the state-space of the programs. We use one choice of thread interleavings at a time to observe the execution and build a computation graph for this execution. The VM listeners in JPF are extended to track the thread creations, executions, joins etc. Memory references are also registered in the computation graphs. The computation graphs are stored in DAG data structure. We are going to use jgrapht library that provides an implementation of this data structure.
+
 \subsection{Verification of Properties of Task Parallel Programs}
 The following properties of task parallel programs can be verified using computation graphs.
 \subsubsection{Data Race}
