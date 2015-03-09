@@ -1,7 +1,9 @@
 \section{Project Description}
 The research described here proposes a new technique for verification of task parallel programs with the help of computation graphs. It uses Habanero Java as an exemplar of task parallel languages. Habanero Java language is a task parallel programming language built as an extension to X10 language. It includes a set of powerful parallel programming constructs that can be used to create programs that are inherently safe. HJ programs can be run on any JVM including Java 8 JVM.  The Habanero Java language puts particular emphasis on the usability and safety of parallel programming constructs. For Example, no HJ program written using async, finish, isolated and phaser constructs can create a logical deadlock cycle.
 
-\subsection{HJ constructs}
+\subsection{Background Information}
+
+\subsubsection{HJ constructs}
 Habanero Java consists of a wide range of constructs for parallel programming.
 \begin{enumerate}
 \item \textbf{Task Spawn and Join} - Async and finish constructs are used to create and join tasks created by a parent process. The statement async(() $ \rightarrow \langle$stmt$\rangle$) creates a new task that can logically execute in parallel with its parent task. The Finish method is used to represent join in Habanero Java. The task executing finish(() $ \rightarrow \langle$stmt$\rangle$) has to wait for all the tasks running inside stmt to finish before it can move on.
@@ -16,7 +18,7 @@ Most of the concurrently running processes have the need to synchronize the acce
 \end{enumerate}
 \end{enumerate}
 
-\subsection{Computation Graphs}
+\subsubsection{Computation Graphs}
 The execution of an task parallel program can be represented in the form of a computation graph. A computation graph of a program is a directed acyclic graph(DAG) structure that represents the sequence of execution of tasks in the parallel program. A computation graph can be represented as G = $\langle$V, E$\rangle$ where
 \begin{itemize}
 \item V represents a set of nodes such that  each node represents a step consisting of an arbitrary sequential computation and
@@ -25,10 +27,11 @@ The execution of an task parallel program can be represented in the form of a co
  \item \textbf{Spawn edges} - They connect steps in parent tasks to steps in child async tasks. When an async is created, a spawn edge is inserted between the step that ends with the async in the parent task and the step that starts the async body in the new child task.
 \item \textbf{Join edges} - They connect steps in descendant tasks to steps in the tasks containing their Immediately Enclosing Finish (IEF) instances. When an async terminates, a join edge is inserted from the last step in the async to the step that follows the IEF operation in the task containing the IEF operation.
 \item \textbf{Continue edges} - They capture sequencing of steps within a task - all steps within the same task are connected by a chain of continue edges.
+\item \textbf{Serialization edges} - They connect two isolated nodes S and S' where nodes S and S' are interfering. Two isolated nodes do not interfere only if they have a total ordering in the CG.
  \end{enumerate} 
 \end{itemize}
 
-\subsection{HJ example with its computation graph representation}
+\subsubsection{HJ example with its computation graph representation}
 Fig.1 shows an example program written in Habanero Java. In this example, the main process starts two new processes running in parallel with the process. The main process has to stop its execution at the end of finish block and wait for the child processes to complete their execution before the main process can proceed further. This results in a computation graph shown in fig. 2. 
 
 \begin{figure}[h!]
@@ -40,16 +43,15 @@ Fig.1 shows an example program written in Habanero Java. In this example, the ma
     \includegraphics[scale=0.4]{../figs/Fig2.jpg}
 \end{figure}
 
-\subsection{Implementation details}
-An HJ computation graph can be built using a tool called HJ-Viz. HJ-Viz processes the event logs produced by the HJLib runtime and generates a dot representation of the computation graph. The dot file can later be processed and displayed in the user’s web browser using the HJ-Viz server. The drawback of this tool is that it does not store the computation graph in a logical data structure that can be traversed and analyzed to verify the properties of the program. Another drawback is that it does not save any memory references to objects. Hence, we need to create a tool that can build a computation graph of an HJ program during runtime and store the information in a logical data-structure that is easy to traverse and analyze.
-
-The modified computation graph builder is implemented using Java Path Finder(JPF). It uses the Verification Runtime, specifically designed to run HJ programs using JPF. The HJ program is compiled using the VR and the class files are analyzed using JPF. JPF creates thread choice generators to systematically explore the state-space of the programs. We use one choice of thread interleavings at a time to observe the execution and build a computation graph for this execution. The VM listeners in JPF are extended to track the thread creations, executions, joins etc. Memory references are also registered in the computation graphs. The computation graphs are stored in DAG data structure. We are going to use jgrapht library that provides an implementation of this data structure.
-
-\subsection{Verification of Properties of Task Parallel Programs}
+\subsubsection{Properties of Task Parallel Programs}
 The following properties of task parallel programs can be verified using computation graphs.
-\subsubsection{Data Race}
-Data races occur in parallel programs when two or more tasks try to access shared variables such that at least one of the accesses is a 'write'. Data races cause the output of the program to become non-deterministic. Data races can be detected in a computation graph when two parallel nodes in the graph access a memory location and atleast one of the operations tries to modify it. A Topological traversal of the graph gives the order of execution of the various tasks. All the nodes that occur between  a pair of Finish-start and Finish-end nodes execute in parallel. The global memory accesses by these processes have to be checked and if conflicting memory-accesses are observed, then a data race should be reported.
-\subsubsection{Determinism}
+
+\begin{enumerate}
+\item
+\textbf{Data Race:}
+Data races occur in parallel programs when two or more tasks try to access shared variables such that at least one of the accesses is a 'write'. Data races cause the output of the program to become non-deterministic. 
+\item
+\textbf{Determinism:}
 Determinism refers to obtaining the same result from a parallel program for a given input. There are different definitions that determine the degree of determinism in parallel programs.
 \begin{enumerate}
 \item
@@ -57,19 +59,17 @@ Determinism refers to obtaining the same result from a parallel program for a gi
 This type of determinism requires the parallel program to not only produce the same output for a given input, but also to produce a unique computation graph for a given input. A program is internally deterministic only if it is free of data-races.
 \item
 \textbf{External (or functional) determinism:\\}
-External determinism requires the parallel program to produce the same output when run on the same input. Program's executions for a given input may be different, but they ultimately produce the same output. When a program is data-race free, it is externally deterministic as well. In the presence of data-races, a program is externally deterministic if every pair of concurrent operators commute.3
+External determinism requires the parallel program to produce the same output when run on the same input. Program's executions for a given input may be different, but they ultimately produce the same output. In the presence of data-races, a program is externally deterministic if every pair of concurrent operators commute.
 \end{enumerate}
-\subsubsection{Deadlock}
-A Deadlock arises in parallel programs when two or more processes are waiting to acquire resources held by other processes without making any progress. The necessary conditions (known as the Coffman conditions) for a deadlock to arise are as follows:
-\begin{enumerate}
-\item 
-{Mutual Exclusion:} At least one resource must be held in a non share-able mode. Only one process can access the resource at any given time. 
-\item
-{Hold and Wait:} This condition refers to a process holding a non share-able resource and trying to acquire another one.
-\item
-{No Preemption}
-If no tasks are allowed to preempt other tasks from holding the locks for certain resources, it can cause a deadlock to happen.
-\item
-{Circular Wait} Circular wait implies that there are at least two tasks that are waiting on resources held by the other tasks.
 \end{enumerate}
-If all the computation graph structures created for all possible inputs of a program do not encounter any processes getting blocked during execution, then we can say the program is deadlock-free.
+
+\subsection{Implementation details}
+An HJ computation graph can be built using a tool called HJ-Viz. HJ-Viz processes the event logs produced by the HJLib runtime and generates a dot representation of the computation graph. The dot file can later be processed and displayed in the user's web browser using the HJ-Viz server. The drawback of this tool is that it does not store the computation graph in a logical data structure that can be traversed and analyzed to verify the properties of the program. Another drawback is that it does not save any memory references to objects. Hence, we need to create a tool that can build a computation graph of an HJ program during runtime and store the information in a logical data-structure that is easy to traverse and analyze.
+
+The modified computation graph builder is implemented using Java Path Finder(JPF). It uses the Verification Runtime, specifically designed to run HJ programs using JPF. The HJ program is compiled using the VR and the class files are analyzed using JPF. JPF creates thread choice generators to systematically explore the state-space of the programs. We use one choice of thread interleavings at a time to observe the execution and build a computation graph for this execution. The VM listeners in JPF are extended to track the thread creations, executions, joins etc. Memory references are also registered in the computation graphs. The computation graphs are stored in DAG data structure. We are going to use jgrapht library that provides an implementation of this data structure.
+
+Data races can be detected in a computation graph when two parallel nodes in the graph access a memory location and atleast one of the operations tries to modify it. A Topological traversal of the graph gives the order of execution of the various tasks. All the nodes that occur between  a pair of Finish-start and Finish-end nodes execute in parallel. The global memory accesses by these processes have to be checked and if conflicting memory-accesses are observed, then a data race should be reported.
+
+For checking functional determinism of the program in the presence of data-races, JPF schedules on the memory location access that is part of the data race. If all the executions of the program produce the same result, then the program is functionally deterministic.
+
+In programs with isolated regions (CG containing serialization edges), JPF creates schedules such that all possible orderings between the interfering isolated nodes is considered. The rest of the process for detecting data-races and checking determinism is carried out on all the obtained computation graphs.

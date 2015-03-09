@@ -1,1 +1,1 @@
-Cilk is a task parallel programming language. It is C-based runtime system. This paper discusses the efficiency of work stealing scheduler and various other features of cilk.
+Cilk is a task parallel programming language. It has C-based runtime system. This paper discusses the efficiency of work stealing scheduler and various other features of cilk.

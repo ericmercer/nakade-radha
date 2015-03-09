@@ -1,0 +1,1 @@
+OpenMP is a set of compiler directives and callable runtime library routines for Fortran and C to express shared-memory parallelism. OpenMP is designed to be a flexible standard, easily implemented across different platforms.

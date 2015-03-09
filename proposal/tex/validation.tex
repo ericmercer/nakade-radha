@@ -1,4 +1,17 @@
 \section{Validation}
+To test the correctness of this approach, we have selected tests for which the properties are already known. The following table gives a summary of the tests and their properties. \\
 
-Add stuff.
-
+\begin{tabular}{ | c | c | c | c |}
+  \hline
+  Test Case & Data Race Free & Structurally deterministic & Functionally deterministic \\
+  \hline
+  Search Count & Y & Y & Y \\
+  \hline
+  Search & N & Y & Y \\
+  \hline
+  Search Index & N & Y & N\\
+  \hline 
+  Search Index With No TaskCreation & N & N & N\\
+   after Instance is Found  & & & \\
+  \hline 
+\end{tabular}
