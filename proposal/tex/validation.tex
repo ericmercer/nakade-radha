@@ -1,5 +1,33 @@
 \section{Validation}
-To test the correctness of this approach, we have selected tests for which the properties are already known. The following table gives a summary of the tests and their properties. \\
+To test the correctness of this approach, we have selected benchmarks from the Java Grande Forum benchmarks (JGF) suite, Barcelona OpenMP Task Suites benchmarks (BOTS), Shootout benchmarks suite, and EC2 challenge. \\
+
+\begin{tabular}{|c|c|c|}
+\hline
+Source & Benchmark & Description \\
+\hline
+\hline
+      & Crypt & IDEA encryption \\
+	& LUFact C & LU Factorization \\
+  	   & MolDyn & Molecular Dynamics simulation \\
+JGF & MonteCarlo & Monte Carlo simulation \\
+      & RayTracer & 3D Ray Tracer \\
+      & Series & Fourier coefficient analysis \\
+      & SOR & Successive over-relaxation \\
+      & SparseMatMult & Sparse Matrix multiplication \\
+      \hline
+      & FFT  & Fast Fourier Transformation \\
+	Bots & Health & Simulates a country health system \\
+& Nqueens & N Queens problem \\
+& Strassen & Matrix Multiply with Strassen’s method \\
+\hline
+Shootout & Fannkuch & Indexed-access to tiny integer-sequence \\
+& Mandelbrot & Generate Mandelbrot set portable bitmap \\
+\hline
+EC2 & Matmul & Matrix Multiplication \\
+\hline
+\end{tabular}
+
+Since most of these benchmarks are data-race free, in addition to these benchmarks, we are also going to use some benchmarks that have data races. The following table gives a summary of the tests and their properties. 
 
 \begin{tabular}{ | c | c | c | c |}
   \hline
