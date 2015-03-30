@@ -1,6 +1,9 @@
-\section{Validation}
+c\section{Validation}
 
-This proposal uses Habanero Java language to describe the implementation details. Using the semantic model for parallel programming languages described in \cite{bouajjani2012analysis}, we can be show that Habanero Java is a superset of other task parallel languages. It contains a wide range of parallel programming constructs that can be used to perform all operations that are possible in other task parallel languages such that Cilk, Chapel, OpenMP3.0, X10 etc. In this section, we describe how to create computation graphs for other task parallel languages. The analysis of these computation graphs proceeds in the same way as analysis of computation graphs for Habanero Java programs. The following examples illustrate the computation graphs for programs written in different task parallel languages.
+In this section we describe the validation process of the claims made in this proposal.
+
+\begin{enumerate}
+\item The first claim made in this proposal is that a computation graph is a suitable representation of the execution of task parallel programs. This proposal uses Habanero Java language to describe the implementation details. Using the semantic model for parallel programming languages described in \cite{bouajjani2012analysis}, we can be show that Habanero Java is a superset of other task parallel languages. It contains a wide range of parallel programming constructs that can be used to perform all operations that are possible in other task parallel languages such that Cilk, Chapel, OpenMP3.0, X10 etc. Now, in this section, we describe how to create computation graphs for other task parallel languages. The analysis of these computation graphs proceeds in the same way as analysis of computation graphs for Habanero Java programs. The following examples illustrate the computation graphs for programs written in different task parallel languages.
 
 \begin{enumerate}
 \item 
@@ -72,7 +75,9 @@ This proposal uses Habanero Java language to describe the implementation details
 \end{figure}
 \end{enumerate}
 
-To test the correctness of this approach, we have selected benchmarks from the Java Grande Forum benchmarks (JGF) suite, Barcelona OpenMP Task Suites benchmarks (BOTS), Shootout benchmarks suite, and EC2 challenge. The Nqueens and Matrix multiplication benchmarks demonstrate the use of basic parallel programming constructs such as async-finish and loop parallelism constructs such as foreach and forall. The Frannkuch and Mandelbrot benchmarks makes use of the co-ordination construct Isolated in conjunction with the simpler async-finish parallel constructs. The LUFact, SOR and MolDyn benchmarks focus on the co-ordination constructs such as phasers and futures. The BOTS  benchmarks belong to the Barcelona OpenMP Task Suites and focus on various parallel constructs of OpenMP. They have been suitably ported to Habanero Java  to be verified with this tool. The following table lists out the benchmarks that are going to be used for validation. 
+\item The second claim is that a computation graph can determine all relevant schedules over tasks that are necessary to be validated to enumerate the possible behaviors of the program. From the implementation details of the computation graph creation, we can see that in the absence of co-ordination constructs such as 'isolated' that do not impose ordering over the concurrent events or tasks, only one schedule needs to be checked to verify the behavior of the program. In programs involving co-ordination over tasks, the computation graph marks the events that have to be ordered and inserts serialization edges between them. The analysis of the program takes into account the specific ordering of the events and creates schedules such that each of the event ordering is considered in such programs.
+
+To test the correctness of this approach, we have selected benchmarks from the Java Grande Forum benchmarks (JGF) suite, Barcelona OpenMP Task Suites benchmarks (BOTS), Shootout benchmarks suite, and EC2 challenge. These benchmarks include programs that exhibit both kinds of behaviors(single computation graph for programs without co-ordination constructs and multiple computation graphs for programs with co-ordination constructs). The Nqueens and Matrix multiplication benchmarks demonstrate the use of basic parallel programming constructs such as async-finish and loop parallelism constructs such as foreach and forall. The Frannkuch and Mandelbrot benchmarks makes use of the co-ordination construct Isolated in conjunction with the simpler async-finish parallel constructs. The LUFact, SOR and MolDyn benchmarks focus on the co-ordination constructs such as phasers and futures. The BOTS  benchmarks from the Barcelona OpenMP Task Suites focus on various parallel constructs of OpenMP. They have been suitably ported to Habanero Java  to be verified with this tool. The following table lists out the benchmarks that are going to be used for validation. 
 
 \begin{tabular}{|c|c|c|}
 \hline
@@ -99,11 +104,8 @@ Shootout & Fannkuch & Indexed-access to tiny integer-sequence \\
 EC2 & Matmul & Matrix Multiplication \\
 \hline
 \end{tabular}
-\\
-\\
 
-In addition to these benchmarks, we are also going to use some micro-benchmarks in Habanero Java that have data races. These 
-micro-benchmarks exhibit different deterministic behaviors. These benchmarks are different variations of search algorithm. The following table gives a summary of the tests and their properties. \\
+\item The third claim made in this proposal is that an exhaustive enumeration of all possible behaviors of a program made with the help of computation graphs is enough for verifying deterministic behavior in task parallel programs. To validate this claim, we use the micro-benchmarks in Habanero Java described in the table below. These micro-benchmarks represent each of the different possible behaviors that can be observed in task parallel programs. A program that is data-race free is always structurally and functionally deterministic. The first example belongs to this category. The second example contains data-races but the program is structurally and functionally deterministic. The third example also has a data-race. The program is structurally deterministic since the program spawns the same number of tasks in every run but functionally non-deterministic because the index of the search term will be different when the searched text has multiple occurrences of the query. The fourth example has data races and is functionally deterministic. But, the program is structurally non-deterministic since number of new spawned tasks depend on the occurrence of the query. The last example has data-races and exhibits both structural and functional non-determinism. This list of micro-benchmarks includes all possible behaviors that a task parallel program can exhibit. The third claim can be validated if the implementation described in this proposal can correctly determine the category for these programs. 
 
 \begin{tabular}{ | c | c | c | c |}
   \hline
@@ -119,3 +121,8 @@ micro-benchmarks exhibit different deterministic behaviors. These benchmarks are
    after Instance is Found  & & & \\
   \hline 
 \end{tabular}
+\\
+\\
+We are going to measure the number of the states explored by this implementation and compare it to the number of states explored by JPF's data-race detector. It is expected that this implementation will explore less number of states to detect data-races. We are also going to compare the runtimes of this method to JPF's data race detector to measure performance improvement.
+
+\end{enumerate}
