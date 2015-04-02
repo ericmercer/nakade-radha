@@ -1,1 +1,1 @@
-This paper introduces the habanero java language and its features. HJ is a task parallel programming language. It provides a set of parallel programming constructs that can be used as extensions to Java programs to take advantage of the multi-core processors.
+This paper introduces the Habanero Java language and its features. HJ is a task parallel programming language. It provides a set of parallel programming constructs that can be used as extensions to Java programs to take advantage of the multi-core processors.

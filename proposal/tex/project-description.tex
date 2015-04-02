@@ -20,8 +20,8 @@ Habanero Java consists of a wide range of constructs for parallel programming.
 \subsubsection{Computation Graphs}
 The execution of an task parallel program can be represented in the form of a computation graph. A computation graph of a program is a directed acyclic graph(DAG) structure that represents the sequence of execution of tasks in the parallel program. A computation graph can be represented as G = $\langle$V, E$\rangle$ where
 \begin{itemize}
-\item V represents a set of nodes such that  each node represents a step consisting of an arbitrary sequential computation and
-\item E represents a set of directed edges that represent ordering constraints. The various types of edges in a computation graph are:
+\item V is a set of nodes such that  each node represents a step consisting of an arbitrary sequential computation and
+\item E is a set of directed edges that represent ordering constraints. The various types of edges in a computation graph are:
 \begin{enumerate}
  \item \textbf{Spawn edges} - They connect steps in parent tasks to steps in child async tasks. When an async is created, a spawn edge is inserted between the step that ends with the async in the parent task and the step that starts the async body in the new child task.
 \item \textbf{Join edges} - They connect steps in descendant tasks to steps in the tasks containing their Immediately Enclosing Finish (IEF) instances. When an async terminates, a join edge is inserted from the last step in the async to the step that follows the IEF operation in the task containing the IEF operation.
@@ -31,21 +31,17 @@ The execution of an task parallel program can be represented in the form of a co
 \end{itemize}
 
 \subsubsection{HJ example with its computation graph representation}
-Fig.1 shows an example program written in Habanero Java. In this example, the main process starts two new processes running in parallel with the process. The main process has to stop its execution at the end of finish block and wait for the child processes to complete their execution before the main process can proceed further. This results in a computation graph shown in fig. 2. 
+Fig.1 shows a sample program written in Habanero Java. In this example, the main process starts two new processes running in parallel with the process. The main process has to stop its execution at the end of finish block and wait for the child processes to complete their execution before the main process can proceed further. Both the newly spawned processes have a co-ordination construct 'isolated' that creates nodes s and s' in the computation graph. There is a serialization edge between s and s' that shows the ordering of the events in this execution. This results in a computation graph shown in fig. 2. 
 
-\begin{figure}[h!]
-\centering
-\begin{minipage}[b]{0.35\linewidth}
-    \includegraphics[scale=0.3]{../figs/Fig1.jpg} 
-\caption{Example HJ Program}
-\label{fig:minipage1}
-\end{minipage}
-\quad
-\begin{minipage}[b]{0.35\linewidth}
-\includegraphics[scale=0.3]{../figs/Fig2.jpg}
-\caption{Computation Graph of the example program}
-\label{fig:minipage2}
-\end{minipage}
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.47\textwidth]{../figs/Fig1.jpg}
+     \caption{Sample HJ Program}
+\end{figure}
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.55\textwidth]{../figs/Fig2.jpg}
+    \caption{Computation Graph of the Sample program}
 \end{figure}
 
 \subsubsection{Properties of Task Parallel Programs}
@@ -71,7 +67,7 @@ External determinism requires the parallel program to produce the same output wh
 \subsection{Implementation details}
 An HJ computation graph can be built using a tool called HJ-Viz. HJ-Viz processes the event logs produced by the HJLib runtime and generates a dot representation of the computation graph. The dot file can later be processed and displayed in the user's web browser using the HJ-Viz server. The drawback of this tool is that it does not store the computation graph in a logical data structure that can be traversed and analyzed to verify the properties of the program. Another drawback is that it does not save any memory references to objects. Hence, we need to create a tool that can build a computation graph of an HJ program during runtime and store the information in a logical data-structure that is easy to traverse and analyze.
 
-The modified computation graph builder is implemented using Java Path Finder(JPF). It uses the Verification Runtime, specifically designed to run HJ programs using JPF. The HJ program is compiled using the VR and the class files are analyzed using JPF. JPF creates thread choice generators to systematically explore the state-space of the programs. We use one choice of thread interleavings at a time to observe the execution and build a computation graph for this execution. The VM listeners in JPF are extended to track the thread creations, executions, joins etc. Memory references are also registered in the computation graphs. The computation graphs are stored in DAG data structure. We are going to use jgrapht library that provides an implementation of this data structure.
+The modified computation graph builder is implemented using Java Path Finder(JPF). It uses the Verification Runtime, specifically designed to run HJ programs using JPF. The HJ program is compiled using the VR and the class files are analyzed using JPF. JPF creates thread choice generators to systematically explore the state-space of the programs. We use one choice of thread interleavings at a time to observe the execution and build a computation graph for that execution. The VM listeners in JPF are extended to track the thread creations, executions, joins etc. Memory references are also registered in the computation graphs. The computation graphs are stored in DAG data structure. We are going to use jgrapht library that provides an implementation of this data structure.
 
 Data races can be detected in a computation graph when two parallel nodes in the graph access a memory location and atleast one of the operations tries to modify it. A Topological traversal of the graph gives the order of execution of the various tasks. All the nodes that occur between  a pair of Finish-start and Finish-end nodes execute in parallel. The global memory accesses by these processes have to be checked and if conflicting memory-accesses are observed, then a data race should be reported.
 

@@ -1,1 +1,1 @@
-This paper proposes a concept of Universal causality graphs. UCGs are set of all feasible interleavings that a given correctness property may violate. It gives formal method to find out all the possible interleavings which make the parallel program non-deterministic.
+This paper proposes a concept of Universal Causality Graphs. UCGs are a set of all feasible interleavings that a given correctness property may violate. It gives formal method to find out all the possible interleavings which make the parallel program non-deterministic.
