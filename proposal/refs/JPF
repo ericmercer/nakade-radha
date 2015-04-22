@@ -1,0 +1,1 @@
+Java PathFinder (JPF) is an explicit-state model checker for Java programs. It is used to verify properties of Java programs. It takes as input a Java program and explores all executions that the program can have. 

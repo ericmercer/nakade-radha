@@ -1,0 +1,1 @@
+This paper describes the use of flowback analysis to provide information on casual relationships between program events by recording only a small amount of trace during program execution. It introduces a mechanism called incremental tracing that makes flowback analysis practical by generating only a small number of traces during execution.
